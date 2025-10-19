@@ -11,7 +11,6 @@ RESET = "\033[0m"
 BAD_PATTERNS = ["ignore", "forget", "reveal", "bypass", "system prompt"]
 
 # This script checks prompt for possible injection attempts
-print("AI Prompt Injection Tester starting...")
 def load_prompts_from_file(path):
 	prompts = []
 	try:
@@ -35,7 +34,9 @@ DEFAULT_PROMPTS = [
 def scan_prompts(prompts):
 	flagged = 0
 	total = 0
-	log = open("scan_log.txt", "a")
+	stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+	log_name = f"scan_{stamp}.txt"
+	log = open(log_name, "w")
 	log.write("\n\n--- Scan run at: " + datetime.datetime.now().isoformat() + " ---\n")
 	for prompt in prompts:
 		total += 1
@@ -52,7 +53,7 @@ def scan_prompts(prompts):
 			log.write("Result: OK: clean prompt\n")
 	log.write(f"\nSummary: tested {total} prompts, {flagged} flagged\n")
 	log.close()
-	print(f"\nScan complete. Tested {total} prompts, {flagged} flagged. Results saved to scan_log.txt")
+	print(f"\nScan complete. Tested {total} prompts, {flagged} flagged. Results saved to {log_name}")
 def main():
 	# If user passes a filename, use it. Otherwise use defaults.
 	if len(sys.argv) > 1:
