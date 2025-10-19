@@ -1,6 +1,7 @@
 # prompt_tester.py - simple prompt injection scanner
 import sys
 import datetime
+from collections import Counter
 
 # Color codes for terminal output (ANSI)
 GREEN = "\033[92m"
@@ -34,6 +35,7 @@ DEFAULT_PROMPTS = [
 def scan_prompts(prompts):
 	flagged = 0
 	total = 0
+	hits = Counter()
 	stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 	log_name = f"scan_{stamp}.txt"
 	log = open(log_name, "w")
@@ -44,13 +46,20 @@ def scan_prompts(prompts):
 		print(f"Testing prompt: {prompt}")
 		log.write(f"\nTesting: {prompt}\n")
 		# detection using BAD_PATTERNS
-		if any(p in prompt.lower() for p in BAD_PATTERNS):
+		lower = prompt.lower()
+		matched = [p for p in BAD_PATTERNS if p in lower]
+		if matched:
 			flagged += 1
-			print(f"{RED} Possible prompt injection detected!{RESET}")
-			log.write("Result: !! Injection suspected\n")
+			hits.update(matched)
+			print(f"{RED} Possible prompt injection detected!{RESET} (hits: {', '.join(matched)})")
+			log.write(f"Result: !! Injection suspected (hits: {', '.join(matched)})\n")
 		else:
 			print(f"{GREEN} Prompt looks clean.{RESET}")
 			log.write("Result: OK: clean prompt\n")
+		if hits:
+			log.write("Pattern breakdown:\n")
+			for k, v in hits.most_common():
+				log.write(f" {k}: {v}\n")
 	log.write(f"\nSummary: tested {total} prompts, {flagged} flagged\n")
 	log.close()
 	print(f"\nScan complete. Tested {total} prompts, {flagged} flagged. Results saved to {log_name}")
