@@ -12,6 +12,17 @@ RESET = "\033[0m"
 BAD_PATTERNS = ["ignore", "forget", "reveal", "bypass", "system prompt"]
 
 # This script checks prompt for possible injection attempts
+def load_patterns(path="patterns.txt"):
+	pats = []
+	try:
+		with open(path, "r") as f:
+			for line in f:
+				s = line.strip().lower()
+				if s:
+					pats.append(s)
+	except FileNotFoundError:
+		pass
+	return pats or BAD_PATTERNS # fallback to built-in list
 def load_prompts_from_file(path):
 	prompts = []
 	try:
@@ -74,6 +85,9 @@ def main():
 	else:
 		prompts = DEFAULT_PROMPTS
 
+	# Load BAD_PATTERNS from patterns.txt (if exists)
+	global BAD_PATTERNS
+	BAD_PATTERNS = load_patterns()
 
 	print("AI Prompt Injection Tester v2")
 	scan_prompts(prompts)

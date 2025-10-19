@@ -1,0 +1,5 @@
+ignore
+forget
+reveal
+bypass
+system prompt
