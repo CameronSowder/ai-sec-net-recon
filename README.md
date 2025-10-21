@@ -1,16 +1,20 @@
 ## Prompt Tester (prompt_tester.py)
-Scans prompts for possible prompt-injection keywords and logs results.
+Scans prompts for possible prompt-injection patterns and writes a per-run log file.
+
+### Why
+- Shows baseline detection for dangerous instruction patterns (prompt injection).
+- Produces timestamped artifacts and a summary (useful for documentation and CI).
 
 ### Usage
-Run with built-in prompts:
+Run built-in tests:
   python3 prompt_tester.py
 
-Run with your own file (one prompt per line):
-  python3 prompt_tester.py myprompts.txt
+Scan a file (one prompt per line):
+  python3 prompt_tester.py sample_prompts.txt
 
-Edit detection rules:
-  patterns.txt  # one keyword per line
+Fail builds if any prompt is flagged:
+  python3 prompt_tester.py sample_prompts.txt --strict
 
 Outputs:
-  scan_YYYYMMDD_HHMMSS.txt  # new log file per run with a pattern breakdown
+  scan_YYYYMMDD_HHMMSS.txt  (per-run log file with summary)
 
